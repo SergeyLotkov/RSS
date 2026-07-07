@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title><![CDATA[Мой Instagram RSS]]></title>
+        <description><![CDATA[Последние посты из Instagram]]></description>
+        <link>https://instagram.com/ВАШ_НИК</link>
+        <generator>RSS for Node</generator>
+        <lastBuildDate>Tue, 07 Jul 2026 16:29:21 GMT</lastBuildDate>
+        <atom:link href="https://SergeyLotkov.github.io/RSS/feed.xml" rel="self" type="application/rss+xml"/>
+        <item>
+            <title><![CDATA[Тестовый пост]]></title>
+            <description><![CDATA[Привет, это мой первый RSS!]]></description>
+            <link>https://instagram.com/p/12345</link>
+            <guid isPermaLink="true">https://instagram.com/p/12345</guid>
+            <pubDate>Tue, 07 Jul 2026 16:29:21 GMT</pubDate>
+        </item>
+    </channel>
+</rss>
