@@ -6,29 +6,32 @@ async function scrapeInstagram() {
     const feed = new RSS({
         title: 'Instagram RSS: handyclass.ru',
         description: 'Последние посты из Instagram',
-        feed_url: 'https://raw.githubusercontent.com/SergeyLotkov/RSS/master/feed.xml',
         site_url: 'https://instagram.com/handyclass.ru',
     });
 
     try {
-        // Мы используем общедоступный инстанс для получения данных профиля
-        // Это безопасно и не вызывает банов вашего аккаунта
-        const response = await axios.get('https://bibliogram.art/api/u/handyclass.ru');
-        const posts = response.data.posts || [];
+        console.log('Попытка получения данных...');
+        // Используем другой метод получения данных через публичный API
+        const response = await axios.get('https://www.instagram.com/handyclass.ru/?__a=1');
+        
+        console.log('Данные получены, обрабатываем...');
+        // В этой версии Instagram отдает JSON в поле graphql
+        const posts = response.data.graphql.user.edge_owner_to_timeline_media.edges;
 
-        posts.slice(0, 5).forEach((post) => {
+        posts.slice(0, 5).forEach((edge) => {
+            const node = edge.node;
             feed.item({
-                title: post.text ? post.text.substring(0, 50) + '...' : 'Новый пост',
-                description: post.text || 'Фото из Instagram',
-                url: `https://instagram.com/p/${post.shortcode}/`,
-                date: new Date(post.takenAt * 1000), // конвертируем время
+                title: node.edge_media_to_caption.edges[0]?.node.text.substring(0, 50) || 'Фото',
+                description: node.edge_media_to_caption.edges[0]?.node.text || 'Instagram Post',
+                url: `https://instagram.com/p/${node.shortcode}/`,
+                date: new Date(node.taken_at_timestamp * 1000),
             });
         });
 
         fs.writeFileSync('feed.xml', feed.xml({ indent: true }));
-        console.log('RSS успешно обновлен с данными из API!');
+        console.log('Файл успешно записан!');
     } catch (error) {
-        console.error('Ошибка получения данных:', error.message);
+        console.error('Критическая ошибка:', error.response ? error.response.status : error.message);
     }
 }
 
