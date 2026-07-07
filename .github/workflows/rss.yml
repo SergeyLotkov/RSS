@@ -1,0 +1,29 @@
+name: Generate RSS
+on:
+  schedule:
+    - cron: '0 * * * *' # Запуск каждый час
+  workflow_dispatch:     # Кнопка для ручного запуска
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install rss # Устанавливаем библиотеку
+      - run: node generate-rss.js # Запускаем скрипт
+      
+      - name: Commit and push
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add feed.xml
+          # Проверяем, изменился ли файл, чтобы не делать лишних коммитов
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Update RSS feed"
+            git push
+          fi
