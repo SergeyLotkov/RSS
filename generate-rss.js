@@ -1,42 +1,34 @@
 const RSS = require('rss');
 const fs = require('fs');
 const axios = require('axios');
-const cheerio = require('cheerio');
 
 async function scrapeInstagram() {
     const feed = new RSS({
-        title: 'Мой Instagram RSS',
-        description: 'Последние посты',
-        site_url: 'https://instagram.com/handyclass.ru', // Укажите свой ник
+        title: 'Instagram RSS: handyclass.ru',
+        description: 'Последние посты из Instagram',
+        feed_url: 'https://raw.githubusercontent.com/SergeyLotkov/RSS/master/feed.xml',
+        site_url: 'https://instagram.com/handyclass.ru',
     });
 
     try {
-        // Маскируемся под реальный браузер
-        const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        };
+        // Мы используем общедоступный инстанс для получения данных профиля
+        // Это безопасно и не вызывает банов вашего аккаунта
+        const response = await axios.get('https://bibliogram.art/api/u/handyclass.ru');
+        const posts = response.data.posts || [];
 
-        const { data } = await axios.get('https://www.instagram.com/handyclass.ru/', { headers });
-        const $ = cheerio.load(data);
-
-        // Ищем мета-теги, где Instagram хранит данные о последних постах
-        // Instagram часто меняет структуру, но мета-теги - самый стабильный путь
-        $('meta[property="og:image"]').each((i, el) => {
-            if (i > 0 && i <= 5) { // Берем несколько картинок
-                feed.item({
-                    title: `Пост ${i}`,
-                    description: 'Новая публикация в Instagram',
-                    url: 'https://instagram.com/', 
-                    date: new Date(),
-                });
-            }
+        posts.slice(0, 5).forEach((post) => {
+            feed.item({
+                title: post.text ? post.text.substring(0, 50) + '...' : 'Новый пост',
+                description: post.text || 'Фото из Instagram',
+                url: `https://instagram.com/p/${post.shortcode}/`,
+                date: new Date(post.takenAt * 1000), // конвертируем время
+            });
         });
 
         fs.writeFileSync('feed.xml', feed.xml({ indent: true }));
-        console.log('RSS успешно обновлен!');
+        console.log('RSS успешно обновлен с данными из API!');
     } catch (error) {
-        console.error('Ошибка:', error.message);
-        // В случае ошибки не ломаем файл, оставляем старый
+        console.error('Ошибка получения данных:', error.message);
     }
 }
 
