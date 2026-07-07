@@ -1,21 +1,21 @@
 const RSS = require('rss');
 const fs = require('fs');
 
-// Имитация получения данных (замените на ваш логику скрейпинга)
-const posts = [
-    { title: 'Первый пост', url: 'https://example.com/1', date: new Date() },
-    { title: 'Второй пост', url: 'https://example.com/2', date: new Date() }
-];
-
 const feed = new RSS({
     title: 'Мой Instagram RSS',
+    description: 'Последние посты из Instagram',
     feed_url: 'https://SergeyLotkov.github.io/RSS/feed.xml',
-    site_url: 'https://instagram.com/handyclass.ru'
+    site_url: 'https://instagram.com/ВАШ_НИК', // Укажите ваш ник
 });
 
-posts.forEach(post => {
-    feed.item({ title: post.title, url: post.url, date: post.date });
+// Здесь будет логика скрейпинга, пока добавим тестовый пост
+feed.item({
+    title: 'Тестовый пост',
+    description: 'Привет, это мой первый RSS!',
+    url: 'https://instagram.com/p/12345',
+    date: new Date(),
 });
 
-// Сохраняем XML в файл
-fs.writeFileSync('feed.xml', feed.xml());
+// Записываем в файл
+fs.writeFileSync('feed.xml', feed.xml({ indent: true }));
+console.log('RSS файл успешно создан!');
