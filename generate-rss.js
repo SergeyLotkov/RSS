@@ -5,7 +5,7 @@ const feed = new RSS({
     title: 'Мой Instagram RSS',
     description: 'Последние посты из Instagram',
     feed_url: 'https://SergeyLotkov.github.io/RSS/feed.xml',
-    site_url: 'https://instagram.com/ВАШ_НИК', // Укажите ваш ник
+    site_url: 'https://instagram.com/handyclass.ru', // Укажите ваш ник
 });
 
 // Здесь будет логика скрейпинга, пока добавим тестовый пост
